@@ -269,98 +269,91 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
   };
 
   return (
-    <div className="app-shell soft-grid min-h-screen p-6 md:p-8 page-enter">
+    <div className="min-h-screen bg-slate-50 p-5 md:p-8 page-enter">
       <div className="max-w-2xl mx-auto">
         <button
           onClick={() => navigate('/admin')}
-          className="flex items-center gap-2 text-teal-700 hover:text-teal-600 font-bold text-sm uppercase mb-8 transition-all hover:-translate-x-0.5"
+          className="flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium text-sm mb-6 transition-all"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Courses
+          Back to Dashboard
         </button>
 
-        <div className="app-panel panel-strong rounded-3xl p-7 md:p-12">
-          <div className="flex items-center gap-4 mb-10 animate-stagger">
-            <div className="bg-teal-100 p-3 rounded-2xl">
-              <BookOpen className="w-8 h-8 text-teal-700" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-black text-slate-900 italic">CREATE COURSE</h1>
-              <p className="text-slate-500 text-sm uppercase tracking-widest font-bold">Add a new course</p>
-            </div>
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 md:p-8">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Create New Course</h1>
+            <p className="text-slate-500 text-sm">Fill in the details to add a new course</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-red-400 text-sm font-semibold">{error}</p>
-              </div>
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-red-600 text-sm font-medium">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6 animate-stagger">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {/* Title */}
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-3 tracking-widest">Course Title *</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Course Title <span className="text-red-500">*</span></label>
               <input
                 type="text"
                 name="title"
                 value={formData.title}
                 onChange={handleChange}
-                placeholder="Enter course title"
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
+                placeholder="e.g., Introduction to Machine Learning"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
               />
             </div>
 
             {/* Description with AI */}
             <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-xs font-black uppercase text-slate-500 tracking-widest">Course Description *</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-slate-700">Course Description <span className="text-red-500">*</span></label>
                 <button
                   type="button"
                   onClick={handleGenerateDescription}
                   disabled={isLoading || !formData.title.trim()}
-                  className="flex items-center gap-1 px-3 py-1 bg-cyan-50 hover:bg-cyan-100 disabled:opacity-50 border border-cyan-200 hover:border-cyan-400 text-cyan-700 rounded-lg font-bold text-xs transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 disabled:opacity-50 text-indigo-600 rounded-lg font-medium text-xs transition-all"
                 >
-                  <Wand2 className="w-3 h-3" />
-                  AI Describe
+                  <Wand2 className="w-3.5 h-3.5" />
+                  Generate with AI
                 </button>
               </div>
               <textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
-                placeholder="Enter course description or click 'AI Describe' to auto-generate"
+                placeholder="Describe what students will learn in this course..."
                 rows="4"
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm resize-none"
+                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm resize-none"
               />
             </div>
 
             {/* Video Section */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 hover-lift">
-              <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                Video Content (Optional)
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-slate-900 mb-4">
+                Video Content <span className="text-slate-400 font-normal">(Optional)</span>
               </h3>
               
               {!videoMethod ? (
                 <div className="space-y-3">
-                  <p className="text-slate-500 text-xs font-bold">Choose how to add video:</p>
+                  <p className="text-slate-500 text-sm">Choose how to add video:</p>
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setVideoMethod('link')}
-                      className="p-3 bg-teal-50 border border-teal-200 hover:border-teal-400 rounded-xl transition-all text-teal-700 font-bold text-xs text-center hover:-translate-y-0.5"
+                      className="p-4 bg-white border border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 rounded-xl transition-all text-slate-700 text-sm font-medium text-center"
                     >
-                      <Link2 className="w-4 h-4 mx-auto mb-1" />
-                      Video Link
+                      <Link2 className="w-5 h-5 mx-auto mb-2 text-slate-400" />
+                      Paste Link
                     </button>
                     <button
                       type="button"
                       onClick={() => setVideoMethod('upload')}
-                      className="p-3 bg-cyan-50 border border-cyan-200 hover:border-cyan-400 rounded-xl transition-all text-cyan-700 font-bold text-xs text-center hover:-translate-y-0.5"
+                      className="p-4 bg-white border border-slate-200 hover:border-teal-300 hover:bg-teal-50/50 rounded-xl transition-all text-slate-700 text-sm font-medium text-center"
                     >
-                      <Upload className="w-4 h-4 mx-auto mb-1" />
+                      <Upload className="w-5 h-5 mx-auto mb-2 text-slate-400" />
                       Upload File
                     </button>
                   </div>
@@ -368,15 +361,15 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
               ) : videoMethod === 'link' ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-2">Video URL</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Video URL</label>
                     <input
                       type="text"
                       value={formData.videoUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, videoUrl: e.target.value }))}
-                      placeholder="https://youtube.com/..."
-                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors text-sm"
+                      placeholder="https://youtube.com/watch?v=..."
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all text-sm"
                     />
-                    <p className="text-slate-500 text-xs mt-1">YouTube, Vimeo, or direct video links</p>
+                    <p className="text-slate-400 text-xs mt-1.5">YouTube, Vimeo, or direct video links</p>
                   </div>
                   <button
                     type="button"
@@ -384,7 +377,7 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
                       setVideoMethod(null);
                       setFormData(prev => ({ ...prev, videoUrl: '' }));
                     }}
-                    className="text-slate-500 hover:text-slate-700 text-xs font-bold"
+                    className="text-slate-500 hover:text-slate-700 text-sm font-medium"
                   >
                     ← Change method
                   </button>
@@ -392,23 +385,23 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
               ) : (
                 <div className="space-y-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 mb-2">Upload Video File</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Upload Video File</label>
                     <input
                       type="file"
                       accept="video/*"
                       onChange={(e) => setVideoFile(e.target.files[0])}
-                      className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-700 outline-none focus:border-cyan-500 transition-colors text-xs file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-600 file:text-white"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-700 outline-none focus:border-teal-500 transition-colors text-sm file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white"
                     />
-                    {videoFile && <p className="text-green-400 text-xs mt-2">✓ {videoFile.name}</p>}
+                    {videoFile && <p className="text-emerald-600 text-sm mt-2">Selected: {videoFile.name}</p>}
                   </div>
                   {videoFile && (
                     <button
                       type="button"
                       onClick={handleUploadVideo}
                       disabled={isLoading}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-700 hover:bg-cyan-600 disabled:opacity-50 text-white rounded-xl font-bold text-xs uppercase transition-all"
+                      className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white rounded-xl font-semibold text-sm transition-all"
                     >
-                      {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />}
+                      {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
                       {isLoading ? 'Uploading...' : 'Upload Video'}
                     </button>
                   )}
@@ -418,41 +411,41 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
                       setVideoMethod(null);
                       setVideoFile(null);
                     }}
-                    className="text-slate-500 hover:text-slate-700 text-xs font-bold"
+                    className="text-slate-500 hover:text-slate-700 text-sm font-medium"
                   >
                     ← Change method
                   </button>
                 </div>
               )}
-              {formData.videoUrl && <p className="text-green-600 text-xs mt-3 flex items-center gap-1">✓ Video added</p>}
+              {formData.videoUrl && <p className="text-emerald-600 text-sm mt-3 font-medium">Video added successfully</p>}
             </div>
 
             {/* Materials Section */}
-            <div className="bg-white border border-slate-200 rounded-2xl p-6 hover-lift">
-              <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
-                Course Materials (Optional)
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <h3 className="text-sm font-semibold text-slate-900 mb-4">
+                Course Materials <span className="text-slate-400 font-normal">(Optional)</span>
               </h3>
               
               <div className="space-y-3">
-                <p className="text-slate-500 text-xs font-bold">Upload PDF, Word, or Text file for AI to generate course content:</p>
+                <p className="text-slate-500 text-sm">Upload a document for AI to generate course content:</p>
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx,.txt"
                   onChange={(e) => setMaterialFile(e.target.files[0])}
                   disabled={isMaterialUploading}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-700 outline-none focus:border-cyan-500 transition-colors text-xs file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-cyan-600 file:text-white disabled:opacity-50"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-700 outline-none focus:border-teal-500 transition-colors text-sm file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white disabled:opacity-50"
                 />
                 {materialFile && (
-                  <p className="text-green-600 text-xs">✓ Selected: {materialFile.name}</p>
+                  <p className="text-emerald-600 text-sm">Selected: {materialFile.name}</p>
                 )}
 
                 {isMaterialUploading && (
-                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                  <div className="bg-white border border-slate-200 rounded-xl p-4">
                     <div className="flex items-center gap-2 mb-2">
-                      <Loader2 className="w-4 h-4 text-cyan-700 animate-spin" />
-                      <p className="text-slate-800 text-xs font-bold">Processing...</p>
+                      <Loader2 className="w-4 h-4 text-teal-600 animate-spin" />
+                      <p className="text-slate-700 text-sm font-medium">Processing...</p>
                     </div>
-                    <p className="text-slate-500 text-xs">{materialProgress}</p>
+                    <p className="text-slate-500 text-sm">{materialProgress}</p>
                   </div>
                 )}
 
@@ -460,28 +453,36 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
                   <button
                     type="button"
                     onClick={handleUploadMaterial}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-cyan-700 hover:bg-cyan-600 text-white rounded-xl font-bold text-xs uppercase transition-all"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-sm transition-all"
                   >
-                    <Upload className="w-3 h-3" />
-                    Generate Materials with AI
+                    <Wand2 className="w-4 h-4" />
+                    Generate with AI
                   </button>
                 )}
 
                 {formData.material && (
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3">
-                    <p className="text-green-400 text-xs font-bold flex items-center gap-2">
-                      ✓ Materials generated! ({JSON.parse(formData.material).pages?.length || 0} pages)
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                    <p className="text-emerald-700 text-sm font-medium">
+                      Materials generated ({JSON.parse(formData.material).pages?.length || 0} pages)
                     </p>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-3 pt-4">
+              <button
+                type="button"
+                onClick={() => navigate('/admin')}
+                disabled={isLoading || isMaterialUploading}
+                className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-slate-700 font-semibold text-sm rounded-xl py-3 transition-all"
+              >
+                Cancel
+              </button>
               <button
                 type="submit"
                 disabled={isLoading || isMaterialUploading || !formData.title.trim() || !formData.description.trim()}
-                className="flex-1 bg-gradient-to-r from-teal-700 to-cyan-700 hover:from-teal-600 hover:to-cyan-600 disabled:opacity-50 text-white font-black text-sm rounded-xl py-3 uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:-translate-y-0.5"
+                className="flex-1 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition-all"
               >
                 {isLoading ? (
                   <>
@@ -491,14 +492,6 @@ Important: Return ONLY valid JSON, no markdown, no explanations.`;
                 ) : (
                   'Create Course'
                 )}
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin')}
-                disabled={isLoading || isMaterialUploading}
-                className="flex-1 bg-white border border-slate-300 hover:border-slate-400 disabled:opacity-50 text-slate-700 font-black text-sm rounded-xl py-3 uppercase tracking-widest transition-all hover:-translate-y-0.5"
-              >
-                Cancel
               </button>
             </div>
           </form>

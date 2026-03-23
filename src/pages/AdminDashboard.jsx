@@ -135,48 +135,50 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="max-w-7xl page-enter">
+    <div className="max-w-6xl page-enter">
       {/* Header */}
-      <div className="mb-12">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900 italic mb-2">ADMIN HUB</h1>
-          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">
-            {activeTab === 'performance' ? 'Track student quiz performance' : 'Manage your courses'}
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-900 mb-1">Admin Dashboard</h1>
+        <p className="text-slate-500 text-sm">
+          {activeTab === 'performance' ? 'Track student quiz performance' : 'Manage and organize your courses'}
+        </p>
+        {activeTab === 'performance' && lastUpdatedAt && (
+          <p className="text-xs text-teal-600 font-medium mt-2">
+            Last updated: {new Date(lastUpdatedAt).toLocaleTimeString()}
           </p>
-          {activeTab === 'performance' && (
-            <p className="text-xs text-teal-700 font-bold mt-2 uppercase tracking-wider">
-              Live updates {lastUpdatedAt ? `| Last refresh ${new Date(lastUpdatedAt).toLocaleTimeString()}` : ''}
-            </p>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Courses View */}
       {activeTab === 'courses' && (
-      <div className="space-y-4">
-        <h2 className="text-2xl font-black text-slate-900 mb-6">Your Courses</h2>
+      <div>
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-lg font-semibold text-slate-900">Your Courses</h2>
+          <span className="text-sm text-slate-500">{courses.length} courses</span>
+        </div>
         {courses.length === 0 ? (
-          <div className="text-center py-20 app-panel rounded-3xl">
-            <Activity className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-600 text-lg font-semibold">No courses yet. Create your first course to get started!</p>
+          <div className="text-center py-16 bg-white border border-slate-200 rounded-xl">
+            <Activity className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-600 font-medium">No courses yet</p>
+            <p className="text-slate-400 text-sm">Create your first course to get started</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-stagger">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {courses.map(course => (
-              <div key={course.id} className="app-panel rounded-3xl p-6 hover:border-teal-500 transition-all hover-lift">
-                <h3 className="text-lg font-black text-slate-900 mb-2 line-clamp-2">{course.title}</h3>
-                <p className="text-slate-600 text-sm mb-4 line-clamp-2">{course.description}</p>
+              <div key={course.id} className="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-lg hover:border-slate-300 transition-all">
+                <h3 className="text-base font-semibold text-slate-900 mb-2 line-clamp-2">{course.title}</h3>
+                <p className="text-slate-500 text-sm mb-4 line-clamp-2">{course.description}</p>
                 <div className="flex gap-2">
                   <button
                     onClick={() => navigate(`/course/${course.id}`)}
-                    className="flex-1 px-4 py-2 bg-teal-700 hover:bg-teal-600 text-white font-black text-xs rounded-xl uppercase transition-all"
+                    className="flex-1 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-lg transition-all"
                   >
-                    View
+                    Edit
                   </button>
                   <button
                     onClick={() => handleDeleteCourse(course.id)}
                     disabled={loading}
-                    className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white font-black text-xs rounded-xl uppercase transition-all"
+                    className="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition-all disabled:opacity-50"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -190,19 +192,19 @@ export default function AdminDashboard() {
 
       {/* Student Performance View */}
       {activeTab === 'performance' && (
-      <div className="space-y-6">
+      <div>
         {loadingScores ? (
-          <div className="text-center py-20">
-            <Loader className="w-12 h-12 text-teal-700 mx-auto animate-spin mb-4" />
-            <p className="text-slate-500 text-lg">Loading student performance data...</p>
+          <div className="text-center py-16">
+            <Loader className="w-8 h-8 text-teal-600 mx-auto animate-spin mb-3" />
+            <p className="text-slate-500 text-sm">Loading student performance...</p>
           </div>
         ) : students.length === 0 ? (
-          <div className="text-center py-20 app-panel rounded-3xl">
-            <Users className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-600 text-lg font-semibold">No enrolled students yet</p>
+          <div className="text-center py-16 bg-white border border-slate-200 rounded-xl">
+            <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+            <p className="text-slate-600 font-medium">No enrolled students yet</p>
           </div>
         ) : (
-          <div className="space-y-4 animate-stagger">
+          <div className="space-y-4">
             {students.map(student => {
               const scores = studentScores[student.id];
               const avgScoreValue = scores && scores.totalQuestions > 0 ? ((scores.totalScore / scores.totalQuestions) * 10) : 0;
@@ -212,37 +214,36 @@ export default function AdminDashboard() {
               const aiAnalysis = aiAnalyses[student.id];
 
               return (
-                <div key={student.id} className="app-panel rounded-2xl p-6 hover:border-cyan-500 transition-all hover-lift">
-                  <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-                    <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Student Email</p>
-                      <p className="text-slate-900 font-bold text-sm">{student.email}</p>
+                <div key={student.id} className="bg-white border border-slate-200 rounded-xl p-5 hover:shadow-md transition-all">
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-4">
+                    <div className="col-span-2 md:col-span-1">
+                      <p className="text-slate-400 text-xs font-medium mb-1">Student</p>
+                      <p className="text-slate-900 font-medium text-sm truncate">{student.email}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Assessments Submitted</p>
+                      <p className="text-slate-400 text-xs font-medium mb-1">Assessments</p>
                       <div className="flex items-center gap-2">
-                        <p className="text-slate-900 font-black text-2xl">{quizCount}</p>
-                        <Activity className="w-5 h-5 text-teal-700" />
+                        <p className="text-slate-900 font-bold text-xl">{quizCount}</p>
+                        <Activity className="w-4 h-4 text-teal-600" />
                       </div>
                     </div>
                     <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Average Score</p>
-                      <div className="flex items-center gap-2">
-                        <p className="text-slate-900 font-black text-2xl">{avgScore}</p>
-                        <span className="text-slate-500 text-sm">/10</span>
-                        <TrendingUp className="w-5 h-5 text-green-400" />
+                      <p className="text-slate-400 text-xs font-medium mb-1">Avg Score</p>
+                      <div className="flex items-center gap-1">
+                        <p className="text-slate-900 font-bold text-xl">{avgScore}</p>
+                        <span className="text-slate-400 text-sm">/10</span>
                       </div>
                     </div>
                     <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Completed Courses</p>
-                      <p className="text-slate-900 font-black text-2xl">{completedCourses}</p>
+                      <p className="text-slate-400 text-xs font-medium mb-1">Completed</p>
+                      <p className="text-slate-900 font-bold text-xl">{completedCourses}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Performance</p>
-                      <div className="w-full bg-slate-200 rounded-full h-2">
+                      <p className="text-slate-400 text-xs font-medium mb-2">Progress</p>
+                      <div className="w-full bg-slate-100 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${
-                            avgScoreValue >= 8 ? 'bg-green-500' : avgScoreValue >= 6 ? 'bg-yellow-500' : 'bg-red-500'
+                            avgScoreValue >= 8 ? 'bg-emerald-500' : avgScoreValue >= 6 ? 'bg-amber-500' : 'bg-red-500'
                           }`}
                           style={{ width: `${quizCount > 0 ? Math.max(4, (avgScoreValue / 10) * 100) : 0}%` }}
                         />
@@ -251,12 +252,12 @@ export default function AdminDashboard() {
                   </div>
 
                   {aiAnalysis && (
-                    <div className="bg-white rounded-xl p-4 border border-slate-200">
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-2 flex items-center gap-2">
-                        <BarChart2 className="w-4 h-4" />
+                    <div className="bg-slate-50 rounded-lg p-4 mt-4">
+                      <p className="text-slate-500 text-xs font-medium mb-2 flex items-center gap-1.5">
+                        <BarChart2 className="w-3.5 h-3.5" />
                         AI Analysis
                       </p>
-                      <p className="text-slate-700 text-sm leading-relaxed">{aiAnalysis}</p>
+                      <p className="text-slate-600 text-sm leading-relaxed">{aiAnalysis}</p>
                     </div>
                   )}
                 </div>

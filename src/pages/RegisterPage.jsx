@@ -110,99 +110,122 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="app-shell soft-grid min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="ambient-orb w-80 h-80 bg-teal-300 top-10 -left-20" />
-      <div className="ambient-orb w-[22rem] h-[22rem] bg-cyan-300 -bottom-16 -right-16" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+      <div className="ambient-orb w-[500px] h-[500px] bg-teal-200/50 -top-40 -left-40" />
+      <div className="ambient-orb w-[400px] h-[400px] bg-indigo-200/40 -bottom-32 -right-32" />
+      
       <div className="w-full max-w-md page-enter relative z-10">
-        <div className="app-panel panel-strong rounded-3xl p-8 md:p-12">
-          <div className="text-center mb-10 animate-stagger">
-            <h1 className="text-4xl font-black text-slate-900 mb-2 italic">EduFlow</h1>
-            <p className="text-slate-500 text-sm uppercase tracking-widest font-bold">Create Your Account</p>
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200/60 p-8 md:p-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-500/20">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Create your account</h1>
+            <p className="text-slate-500 text-sm">Start learning with EduFlow today</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-red-400 text-sm font-semibold mb-2">{error}</p>
-                <button onClick={() => setError(null)} className="text-xs font-black uppercase text-red-300 hover:text-red-200">Dismiss</button>
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-red-600 text-sm font-medium">{error}</p>
+                <button onClick={() => setError(null)} className="text-xs font-semibold text-red-500 hover:text-red-600 mt-1">Dismiss</button>
               </div>
             </div>
           )}
 
-          <form onSubmit={handleRegister} className="space-y-5 mb-8 animate-stagger">
+          <form onSubmit={handleRegister} className="space-y-4 mb-6">
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <User className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name"
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
+                  placeholder="John Doe"
+                  className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Email</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Email</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <Mail className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
+                  placeholder="you@example.com"
+                  className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
-                />
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Confirm</label>
+                <div className="relative">
+                  <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
+                  />
+                </div>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Confirm Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirm your password"
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
-                />
+              <label className="block text-sm font-medium text-slate-700 mb-2">I am a</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('student')}
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    selectedRole === 'student'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  Student
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('admin')}
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    selectedRole === 'admin'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  Admin / Teacher
+                </button>
               </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Register As</label>
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors text-sm"
-              >
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
-              </select>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-teal-700 to-cyan-700 hover:from-teal-600 hover:to-cyan-600 disabled:opacity-50 text-white font-black text-sm rounded-xl py-3 uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:-translate-y-0.5"
+              className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition-all mt-6"
             >
               {isLoading ? (
                 <>
@@ -210,20 +233,17 @@ export default function RegisterPage() {
                   Creating account...
                 </>
               ) : (
-                <>
-                  <LogIn className="w-4 h-4" />
-                  Create Account
-                </>
+                'Create account'
               )}
             </button>
           </form>
 
-          <div className="relative mb-8">
+          <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-300" />
+              <div className="w-full border-t border-slate-200" />
             </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white/70 text-slate-500 uppercase text-xs font-black">Or</span>
+            <div className="relative flex justify-center">
+              <span className="px-3 bg-white text-slate-400 text-xs font-medium">or continue with</span>
             </div>
           </div>
 
@@ -235,46 +255,63 @@ export default function RegisterPage() {
               setShowGoogleDetailsModal(true);
             }}
             disabled={isLoading || !supabase}
-            className="w-full bg-white border border-slate-300 hover:border-teal-500 disabled:opacity-50 text-slate-800 font-black text-sm rounded-xl py-3 uppercase tracking-widest transition-all flex items-center justify-center gap-2 hover:-translate-y-0.5"
+            className="w-full bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 disabled:opacity-50 text-slate-700 font-semibold text-sm rounded-xl py-3 transition-all flex items-center justify-center gap-2.5"
           >
             <GoogleLogo className="w-5 h-5" />
-            Continue with Google
+            Google
           </button>
 
-          <p className="text-center text-slate-500 text-xs">
-            Already have an account? <Link to="/login" className="text-teal-700 font-bold hover:text-teal-600">Sign in</Link>
+          <p className="text-center text-slate-600 text-sm mt-8 pt-6 border-t border-slate-100">
+            Already have an account?{' '}
+            <Link to="/login" className="text-teal-600 font-semibold hover:text-teal-700">Sign in</Link>
           </p>
         </div>
       </div>
 
       {showGoogleDetailsModal && (
-        <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-2xl p-6 shadow-2xl page-enter">
-            <h2 className="text-slate-900 text-xl font-black mb-2">Complete Google Registration</h2>
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl page-enter">
+            <h2 className="text-slate-900 text-xl font-bold mb-1">Complete your profile</h2>
             <p className="text-slate-500 text-sm mb-6">Tell us your name and role before continuing with Google.</p>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Full Name</label>
+                <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
                 <input
                   type="text"
                   value={googleName}
                   onChange={(e) => setGoogleName(e.target.value)}
-                  placeholder="Enter your full name"
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
+                  placeholder="John Doe"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Register As</label>
-                <select
-                  value={googleRole}
-                  onChange={(e) => setGoogleRole(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors text-sm"
-                >
-                  <option value="student">Student</option>
-                  <option value="admin">Admin</option>
-                </select>
+                <label className="block text-sm font-medium text-slate-700 mb-2">I am a</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setGoogleRole('student')}
+                    className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                      googleRole === 'student'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGoogleRole('admin')}
+                    className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                      googleRole === 'admin'
+                        ? 'border-teal-500 bg-teal-50 text-teal-700'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                    }`}
+                  >
+                    Admin / Teacher
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -282,7 +319,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowGoogleDetailsModal(false)}
-                className="flex-1 bg-white border border-slate-300 hover:border-slate-400 text-slate-700 font-black text-xs uppercase tracking-widest rounded-xl py-3 transition-all"
+                className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-sm rounded-xl py-3 transition-all"
               >
                 Cancel
               </button>
@@ -290,7 +327,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={handleGoogleRegister}
                 disabled={isLoading}
-                className="flex-1 bg-teal-700 hover:bg-teal-600 disabled:opacity-50 text-white font-black text-xs uppercase tracking-widest rounded-xl py-3 transition-all flex items-center justify-center gap-2"
+                className="flex-1 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white font-semibold text-sm rounded-xl py-3 transition-all flex items-center justify-center gap-2"
               >
                 {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GoogleLogo className="w-4 h-4" />}
                 Continue

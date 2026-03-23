@@ -78,7 +78,7 @@ export default function Sidebar() {
       {/* Mobile Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden p-2 bg-white border border-slate-200 rounded-xl text-slate-800 shadow-sm hover:bg-slate-50 transition-all hover:-translate-y-0.5"
+        className="fixed top-4 left-4 z-50 lg:hidden p-2.5 bg-white border border-slate-200 rounded-xl text-slate-700 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
       >
         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
@@ -86,29 +86,32 @@ export default function Sidebar() {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/30 z-30 lg:hidden"
+          className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-72 panel-strong border-r border-slate-200 z-40 transition-transform duration-300 overflow-y-auto backdrop-blur-md lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-screen w-72 bg-white border-r border-slate-200/80 z-40 transition-transform duration-300 overflow-y-auto lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 space-y-8 h-full flex flex-col page-enter">
+        <div className="p-5 flex flex-col h-full page-enter">
           {/* Logo/Branding */}
-          <div className="flex items-center gap-3 group cursor-pointer" onClick={() => {
-            navigate(role === 'admin' ? '/admin' : '/student');
-            setIsOpen(false);
-          }}>
-            <div className="bg-teal-100 p-3 rounded-xl group-hover:bg-teal-200 transition-all">
-              <BookOpen className="w-6 h-6 text-teal-700" />
+          <div 
+            className="flex items-center gap-3 mb-8 cursor-pointer group" 
+            onClick={() => {
+              navigate(role === 'admin' ? '/admin' : '/student');
+              setIsOpen(false);
+            }}
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm group-hover:shadow-md transition-all">
+              <BookOpen className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-slate-900 font-black text-xl italic">EduFlow</p>
-              <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Learning Hub</p>
+              <p className="text-slate-900 font-bold text-lg tracking-tight">EduFlow</p>
+              <p className="text-slate-400 text-xs font-medium">Learning Platform</p>
             </div>
           </div>
 
@@ -116,62 +119,66 @@ export default function Sidebar() {
           <nav className="flex-1 space-y-6">
             {/* Main Navigation */}
             <div>
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-3">Navigation</p>
-              <div className="space-y-2 animate-stagger">
-                {navigation.map((item, index) => (
+              <p className="section-label px-3">Menu</p>
+              <div className="space-y-1">
+                {navigation.map((item) => (
                   <button
                     key={item.label}
                     onClick={() => handleNavClick(item.path, item.disabled)}
                     disabled={item.disabled}
-                    style={{ animationDelay: `${index * 55}ms` }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                       isActive(item.path)
-                        ? 'bg-teal-700 text-white shadow-lg shadow-teal-200'
+                        ? 'bg-teal-50 text-teal-700 font-semibold'
                         : item.disabled
-                        ? 'text-slate-400 cursor-not-allowed opacity-60'
-                        : 'text-slate-700 hover:bg-teal-50 hover:text-teal-800 hover:-translate-y-0.5'
+                        ? 'text-slate-300 cursor-not-allowed'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
                     }`}
                   >
-                    <item.icon className="w-4 h-4" />
+                    <item.icon className={`w-[18px] h-[18px] ${isActive(item.path) ? 'text-teal-600' : ''}`} />
                     {item.label}
-                    {item.disabled && <span className="text-xs ml-auto">Soon</span>}
+                    {item.disabled && (
+                      <span className="ml-auto text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Soon</span>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
-
-
             {/* User Section */}
             <div>
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-3">Account</p>
-              <div className="space-y-2">
+              <p className="section-label px-3">Account</p>
+              <div className="space-y-1">
                 <button
                   disabled
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm uppercase tracking-wide text-slate-600 opacity-50 cursor-not-allowed"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 cursor-not-allowed"
                 >
-                  <User className="w-4 h-4" />
+                  <User className="w-[18px] h-[18px]" />
                   Profile
+                  <span className="ml-auto text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Soon</span>
                 </button>
               </div>
             </div>
           </nav>
 
           {/* User Info and Logout */}
-          <div className="border-t border-slate-200 pt-6 space-y-4">
-            <div className="bg-slate-100 rounded-xl p-4 border border-slate-200 hover-lift">
-              <p className="text-slate-500 text-xs font-bold mb-1">Logged in as</p>
-              <p className="text-slate-900 font-bold text-sm truncate">{user?.email}</p>
-              <p className="text-teal-700 text-xs font-bold uppercase tracking-wide mt-1">
+          <div className="border-t border-slate-100 pt-5 mt-4 space-y-3">
+            <div className="bg-slate-50 rounded-xl p-3.5">
+              <p className="text-slate-400 text-[11px] font-medium uppercase tracking-wide mb-1">Signed in as</p>
+              <p className="text-slate-900 font-semibold text-sm truncate">{user?.email}</p>
+              <span className={`inline-block mt-2 text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                role === 'admin' 
+                  ? 'bg-purple-100 text-purple-700' 
+                  : 'bg-teal-100 text-teal-700'
+              }`}>
                 {role === 'admin' ? 'Administrator' : 'Student'}
-              </p>
+              </span>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-0.5"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold text-sm transition-all"
             >
               <LogOut className="w-4 h-4" />
-              Logout
+              Sign Out
             </button>
           </div>
         </div>

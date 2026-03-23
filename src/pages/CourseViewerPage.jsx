@@ -138,11 +138,11 @@ export default function CourseViewerPage() {
 
   if (!course) {
     return (
-      <div className="app-shell soft-grid min-h-screen flex items-center justify-center p-4">
-        <div className="app-panel panel-strong rounded-3xl p-8 text-center page-enter">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <p className="text-slate-900 font-black text-lg mb-4">Course not found</p>
-          <button onClick={() => navigate('/student')} className="px-6 py-3 bg-teal-700 hover:bg-teal-600 text-white font-black rounded-xl transition-all hover:-translate-y-0.5">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+        <div className="bg-white border border-slate-200 rounded-xl p-8 text-center shadow-sm page-enter">
+          <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+          <p className="text-slate-900 font-semibold text-lg mb-4">Course not found</p>
+          <button onClick={() => navigate('/student')} className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm rounded-lg transition-all">
             Back to Courses
           </button>
         </div>
@@ -486,42 +486,42 @@ export default function CourseViewerPage() {
   };
 
   return (
-    <div className="app-shell soft-grid min-h-screen p-6 md:p-8 pb-20 page-enter">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-slate-50 p-5 md:p-8 pb-20 page-enter">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="flex justify-between items-center mb-12">
-          <button onClick={() => navigate('/student')} className="flex items-center gap-4 text-slate-600 hover:text-slate-900 transition-all font-black uppercase text-[10px] tracking-widest group">
-            <div className="p-3 rounded-2xl bg-white border border-slate-300 group-hover:bg-teal-700 group-hover:text-white transition-all"><ChevronRight className="w-5 h-5 rotate-180" /></div>
-            Back
+        <div className="flex justify-between items-center mb-8">
+          <button onClick={() => navigate('/student')} className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-all font-medium text-sm">
+            <ChevronRight className="w-4 h-4 rotate-180" />
+            Back to Dashboard
           </button>
-          <div className="flex items-center gap-3 text-teal-700 bg-teal-50 px-6 py-2.5 rounded-full border border-teal-200 text-[10px] font-black uppercase tracking-widest">
-            <Activity className="w-4 h-4" /> Help Bot Active
+          <div className="flex items-center gap-2 text-teal-700 bg-teal-50 px-4 py-2 rounded-full text-xs font-semibold">
+            <Activity className="w-4 h-4" /> AI Help Active
           </div>
         </div>
 
         {/* Course Title */}
-        <h1 className="text-4xl md:text-5xl font-black italic mb-12 text-slate-900">{course.title}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold mb-8 text-slate-900">{course.title}</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-8 space-y-10">
+          <div className="lg:col-span-8 space-y-6">
             {/* Video/Material Tabs */}
-            <div className="app-panel panel-strong rounded-[2rem] overflow-hidden shadow-2xl">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               {/* Tab Buttons */}
-              <div className="flex border-b border-slate-200 bg-white/60">
+              <div className="flex border-b border-slate-200">
                 <button
                   onClick={() => setTab('video')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-4 uppercase text-[10px] font-black tracking-widest transition-all ${tab === 'video' ? 'bg-teal-50 text-teal-700 border-b-2 border-teal-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all ${tab === 'video' ? 'bg-slate-50 text-slate-900 border-b-2 border-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                   <Video className="w-4 h-4" />
-                  Video Lesson
+                  Video
                 </button>
                 <button
                   onClick={() => setTab('material')}
-                  className={`flex-1 flex items-center justify-center gap-2 py-4 uppercase text-[10px] font-black tracking-widest transition-all ${tab === 'material' ? 'bg-cyan-50 text-cyan-700 border-b-2 border-cyan-600' : 'text-slate-500 hover:text-slate-700'}`}
+                  className={`flex-1 flex items-center justify-center gap-2 py-3 text-sm font-medium transition-all ${tab === 'material' ? 'bg-slate-50 text-slate-900 border-b-2 border-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
                 >
                   <BookOpen className="w-4 h-4" />
-                  Study Materials
+                  Materials
                 </button>
               </div>
 
@@ -537,10 +537,10 @@ export default function CourseViewerPage() {
               )}
 
               {tab === 'material' && (
-                <div className="p-10 lg:p-16 space-y-8">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-6">
-                    <h2 className="text-3xl md:text-4xl font-black italic uppercase text-slate-900">Study Materials</h2>
-                    <div className="text-[10px] uppercase tracking-widest text-slate-500 font-black">Page {pageIndex + 1} / {totalPages}</div>
+                <div className="p-6 md:p-8 space-y-6">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-100 pb-4">
+                    <h2 className="text-lg font-semibold text-slate-900">Study Materials</h2>
+                    <span className="text-sm text-slate-500 font-medium">Page {pageIndex + 1} of {totalPages}</span>
                   </div>
 
                   {/* Page Navigation */}
@@ -548,41 +548,41 @@ export default function CourseViewerPage() {
                     <button
                       onClick={() => setPageIndex(Math.max(0, pageIndex - 1))}
                       disabled={pageIndex === 0}
-                      className="px-4 py-2 bg-white border border-slate-300 hover:border-teal-400 disabled:opacity-50 rounded-xl text-slate-700 text-xs font-black transition-all"
+                      className="px-4 py-2 bg-white border border-slate-200 hover:border-slate-300 disabled:opacity-50 rounded-lg text-slate-700 text-sm font-medium transition-all"
                     >
                       ← Previous
                     </button>
                     <button
                       onClick={() => setPageIndex(Math.min(totalPages - 1, pageIndex + 1))}
                       disabled={pageIndex === totalPages - 1}
-                      className="px-4 py-2 bg-white border border-slate-300 hover:border-teal-400 disabled:opacity-50 rounded-xl text-slate-700 text-xs font-black transition-all"
+                      className="px-4 py-2 bg-white border border-slate-200 hover:border-slate-300 disabled:opacity-50 rounded-lg text-slate-700 text-sm font-medium transition-all"
                     >
                       Next →
                     </button>
                   </div>
 
                   {/* Page Content */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-8">
-                    <h3 className="text-xl font-black text-slate-900 mb-4">{activePage.title}</h3>
-                    <p className="text-slate-700 whitespace-pre-wrap mb-6">{activePage.content}</p>
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-slate-900 mb-3">{activePage.title}</h3>
+                    <p className="text-slate-600 whitespace-pre-wrap mb-5 text-sm leading-relaxed">{activePage.content}</p>
                     
                     {/* Summary */}
-                    <div className="p-4 rounded-xl border border-cyan-200 bg-cyan-50 mb-6">
-                      <p className="text-[10px] uppercase tracking-widest font-black text-cyan-700 mb-2">AI Summary</p>
+                    <div className="p-4 rounded-lg border border-indigo-100 bg-indigo-50 mb-6">
+                      <p className="text-xs font-semibold text-indigo-600 mb-1">AI Summary</p>
                       <p className="text-slate-700 text-sm">{activePage.summary || 'No summary available.'}</p>
                     </div>
 
                     {/* Quiz */}
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       <div>
-                        <h4 className="text-sm font-black text-teal-700 mb-3 uppercase">Quiz Question</h4>
-                        <p className="text-slate-800 mb-4">{activePage.quiz.question}</p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <h4 className="text-sm font-semibold text-slate-900 mb-3">Quiz Question</h4>
+                        <p className="text-slate-700 text-sm mb-3">{activePage.quiz.question}</p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                           {activePage.quiz.options.map(option => (
                             <button
                               key={option}
                               onClick={() => setQuizChoice(option)}
-                              className={`text-left px-4 py-3 rounded-xl border text-sm font-semibold transition-all ${activeAnswers.quizChoice === option ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-slate-300 bg-white text-slate-700 hover:border-teal-400'}`}
+                              className={`text-left px-4 py-3 rounded-lg border text-sm font-medium transition-all ${activeAnswers.quizChoice === option ? 'border-teal-500 bg-teal-50 text-teal-700' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'}`}
                             >
                               {option}
                             </button>
@@ -592,48 +592,48 @@ export default function CourseViewerPage() {
 
                       {/* Fill Blank */}
                       <div>
-                        <h4 className="text-sm font-black text-cyan-700 mb-3 uppercase">Fill in the Blank</h4>
-                        <p className="text-slate-700 mb-4">{activePage.fillBlank.prompt}</p>
+                        <h4 className="text-sm font-semibold text-slate-900 mb-3">Fill in the Blank</h4>
+                        <p className="text-slate-600 text-sm mb-3">{activePage.fillBlank.prompt}</p>
                         <input
                           type="text"
                           value={activeAnswers.fillBlankInput || ''}
                           onChange={(e) => setFillBlankInput(e.target.value)}
                           placeholder="Type your answer..."
-                          className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white text-slate-900 outline-none focus:border-cyan-600 focus:ring-2 focus:ring-cyan-100"
+                          className="w-full px-4 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 text-sm"
                         />
                       </div>
 
                       <button
                         onClick={submitAssessment}
                         disabled={isSavingAssessment}
-                        className="w-full mt-6 px-4 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white font-black text-xs rounded-xl uppercase tracking-wider"
+                        className="w-full mt-4 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-semibold text-sm rounded-lg transition-all"
                       >
-                        {isSavingAssessment ? 'Saving Result...' : 'Submit Assessment'}
+                        {isSavingAssessment ? 'Saving...' : 'Submit Assessment'}
                       </button>
 
                       {assessmentMessage && (
-                        <div className={`mt-3 px-4 py-3 rounded-xl border text-xs font-bold ${assessmentMessage.type === 'success' ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300' : 'border-red-500/30 bg-red-500/10 text-red-300'}`}>
+                        <div className={`mt-3 px-4 py-3 rounded-lg border text-sm font-medium ${assessmentMessage.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-red-200 bg-red-50 text-red-700'}`}>
                           {assessmentMessage.text}
                         </div>
                       )}
 
                       {resultsByPage[pageIndex] && (
                         <div className="mt-3 space-y-3">
-                          <div className="px-4 py-3 rounded-xl border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-bold">
-                            Saved score for this page: {resultsByPage[pageIndex].score}/2
+                          <div className="px-4 py-3 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-sm font-medium">
+                            Your score for this page: {resultsByPage[pageIndex].score}/2
                           </div>
 
                           {pageIndex < totalPages - 1 ? (
                             <button
                               type="button"
                               onClick={() => setPageIndex(Math.min(totalPages - 1, pageIndex + 1))}
-                              className="w-full px-4 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-500 hover:to-blue-500 text-white font-black text-xs uppercase tracking-wider"
+                              className="w-full px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition-all"
                             >
-                              Next Page Assignment
+                              Continue to Next Page
                             </button>
                           ) : (
-                            <div className="px-4 py-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-emerald-300 text-xs font-bold">
-                              You have reached the final page assignment.
+                            <div className="px-4 py-3 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-sm font-medium">
+                              You've completed all page assignments.
                             </div>
                           )}
                         </div>
@@ -647,28 +647,31 @@ export default function CourseViewerPage() {
 
           {/* Help Bot Sidebar */}
           <div className="lg:col-span-4">
-            <div className="app-panel panel-strong rounded-[2rem] flex flex-col overflow-hidden shadow-2xl h-[600px] sticky top-8">
-              <div className="p-6 border-b border-slate-200 bg-white/65 flex items-center justify-between">
-                <div className="flex items-center gap-3"><HelpCircle className="w-6 h-6 text-teal-700" /><h4 className="font-black text-slate-900 text-[10px] uppercase tracking-widest">Help Bot</h4></div>
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            <div className="bg-white border border-slate-200 rounded-xl flex flex-col overflow-hidden shadow-sm h-[600px] sticky top-8">
+              <div className="p-4 border-b border-slate-100 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="w-5 h-5 text-teal-600" />
+                  <h4 className="font-semibold text-slate-900 text-sm">AI Help</h4>
+                </div>
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               </div>
 
-              <div className="h-[400px] overflow-y-auto p-6 space-y-6 custom-scrollbar text-[11px] leading-relaxed">
-                <div className="bg-teal-50 border border-teal-200 p-5 rounded-3xl text-[11px] text-teal-700 font-medium italic">
-                  "Hello! I'm ready to answer questions about {course.title}. Type below."
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 text-sm">
+                <div className="bg-teal-50 border border-teal-100 p-4 rounded-lg text-sm text-teal-700">
+                  Hello! I can help answer questions about {course.title}.
                 </div>
                 {messages.map((m, i) => (
                   <div key={i} className={`flex flex-col ${m.is_ai ? 'items-start' : 'items-end'}`}>
-                    <div className={`max-w-[85%] p-5 rounded-3xl text-[11px] font-medium shadow-sm ${m.is_ai ? 'bg-slate-100 text-slate-700 rounded-tl-none border border-slate-200' : 'bg-teal-700 text-white rounded-tr-none'}`}>{m.content}</div>
+                    <div className={`max-w-[85%] p-3 rounded-lg text-sm ${m.is_ai ? 'bg-slate-100 text-slate-700 rounded-tl-sm' : 'bg-teal-600 text-white rounded-tr-sm'}`}>{m.content}</div>
                   </div>
                 ))}
-                {isAiLoading && <div className="flex gap-2 p-3"><div className="w-1.5 h-1.5 bg-teal-600 rounded-full animate-bounce" /></div>}
+                {isAiLoading && <div className="flex gap-1 p-2"><div className="w-2 h-2 bg-teal-600 rounded-full animate-bounce" /></div>}
               </div>
 
-              <form onSubmit={sendMessage} className="p-6 border-t border-slate-200 bg-white/65">
+              <form onSubmit={sendMessage} className="p-4 border-t border-slate-100">
                 <div className="relative">
-                  <input type="text" placeholder="Ask a question..." value={input} onChange={(e) => setInput(e.target.value)} className="w-full bg-white border border-slate-300 rounded-2xl px-6 py-5 text-xs outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-600 transition-all pr-14" />
-                  <button type="submit" className="absolute right-3 top-3 p-3 text-teal-700 hover:text-teal-600"><MessageSquare className="w-5 h-5" /></button>
+                  <input type="text" placeholder="Ask a question..." value={input} onChange={(e) => setInput(e.target.value)} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm outline-none focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500 transition-all pr-12" />
+                  <button type="submit" className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-teal-600 hover:text-teal-700"><MessageSquare className="w-5 h-5" /></button>
                 </div>
               </form>
             </div>

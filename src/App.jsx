@@ -15,9 +15,9 @@ import CompleteProfilePage from './pages/CompleteProfilePage';
 // Layout with Sidebar
 function MainLayout({ children }) {
   return (
-    <div className="app-shell soft-grid flex min-h-screen">
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 p-6 md:p-8 lg:p-10">
+      <main className="flex-1 p-5 md:p-8 lg:p-10">
         <div className="page-enter">
           {children}
         </div>
@@ -32,10 +32,10 @@ function ProtectedRoute({ children, requiredRole = null }) {
 
   if (loading) {
     return (
-      <div className="app-shell min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-slate-300 border-t-teal-700 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-800 font-black text-lg">Loading...</p>
+          <div className="w-10 h-10 border-3 border-slate-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-slate-600 font-medium text-sm">Loading...</p>
         </div>
       </div>
     );
@@ -62,10 +62,10 @@ function AuthRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="app-shell min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-slate-300 border-t-teal-700 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-800 font-black text-lg">Loading...</p>
+          <div className="w-10 h-10 border-3 border-slate-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-slate-600 font-medium text-sm">Loading...</p>
         </div>
       </div>
     );
@@ -87,10 +87,10 @@ function ProfileSetupRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="app-shell min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-slate-300 border-t-teal-700 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-slate-800 font-black text-lg">Loading...</p>
+          <div className="w-10 h-10 border-3 border-slate-200 border-t-teal-600 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-slate-600 font-medium text-sm">Loading...</p>
         </div>
       </div>
     );

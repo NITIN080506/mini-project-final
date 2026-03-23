@@ -32,57 +32,78 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="app-shell soft-grid min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="ambient-orb w-80 h-80 bg-teal-300 top-10 -left-20" />
-      <div className="ambient-orb w-[22rem] h-[22rem] bg-sky-300 -bottom-16 -right-16" />
+    <div className="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+      <div className="ambient-orb w-[500px] h-[500px] bg-teal-200/50 -top-40 -left-40" />
+      <div className="ambient-orb w-[400px] h-[400px] bg-indigo-200/40 -bottom-32 -right-32" />
+      
       <div className="w-full max-w-md page-enter relative z-10">
-        <div className="app-panel panel-strong rounded-3xl p-10 shadow-2xl backdrop-blur-sm">
-          <div className="text-center mb-8 animate-stagger">
-            <h1 className="text-4xl font-black text-slate-900 mb-2 italic">EduFlow</h1>
-            <p className="text-slate-500 text-xs uppercase tracking-widest font-bold">Complete Your Profile</p>
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200/60 p-8 md:p-10">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-teal-500/20">
+              <User className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">Complete your profile</h1>
+            <p className="text-slate-500 text-sm">Tell us a bit about yourself</p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-red-300 text-xs font-semibold">{error}</p>
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <p className="text-red-600 text-sm font-medium">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">Full Name</label>
+              <label className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name"
-                  className="w-full bg-white border border-slate-300 rounded-xl pl-10 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
+                  placeholder="John Doe"
+                  className="w-full bg-white border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-slate-900 outline-none focus:border-teal-500 focus:ring-4 focus:ring-teal-500/10 transition-all placeholder-slate-400 text-sm"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-black uppercase text-slate-500 mb-2 tracking-widest">I am joining as</label>
-              <select
-                value={selectedRole}
-                onChange={(e) => setSelectedRole(e.target.value)}
-                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors text-sm"
-              >
-                <option value="student">Student</option>
-                <option value="admin">Admin</option>
-              </select>
+              <label className="block text-sm font-medium text-slate-700 mb-2">I am a</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('student')}
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    selectedRole === 'student'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  Student
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedRole('admin')}
+                  className={`py-3 px-4 rounded-xl border-2 text-sm font-semibold transition-all ${
+                    selectedRole === 'admin'
+                      ? 'border-teal-500 bg-teal-50 text-teal-700'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                >
+                  Admin / Teacher
+                </button>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full bg-gradient-to-r from-teal-700 to-cyan-700 hover:from-teal-600 hover:to-cyan-600 disabled:opacity-50 text-white font-black text-sm rounded-xl py-3 uppercase tracking-widest flex items-center justify-center gap-2 transition-all hover:-translate-y-0.5"
+              className="w-full bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm rounded-xl py-3 flex items-center justify-center gap-2 transition-all mt-6"
             >
               {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-              Save and Continue
+              {isSaving ? 'Saving...' : 'Continue'}
             </button>
           </form>
         </div>
