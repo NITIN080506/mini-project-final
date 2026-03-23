@@ -55,6 +55,23 @@ export default function StudentDashboard() {
     const buildLocalCompletionMap = () => {
       const localMap = {};
       courses.forEach((course) => {
+        // First check for explicit completion flag (saved after course is fully completed)
+        const completionFlagKey = `course-completed-${course.id}-${user.id}`;
+        const completionFlag = localStorage.getItem(completionFlagKey);
+        
+        if (completionFlag) {
+          try {
+            const flagData = JSON.parse(completionFlag);
+            if (flagData.completed === true) {
+              localMap[course.id] = true;
+              return;
+            }
+          } catch (err) {
+            // Fall through to check results
+          }
+        }
+        
+        // Fall back to checking if all pages have assessment results
         const key = `course-results-${course.id}-${user.id}`;
         const raw = localStorage.getItem(key);
         if (!raw) {
@@ -85,17 +102,28 @@ export default function StudentDashboard() {
       try {
         const { data } = await supabase
           .from(ASSESSMENT_TABLE)
-          .select('course_id, course_completed, completion_percent')
+          .select('*')
           .eq('user_id', user.id);
 
         const merged = { ...localMap };
         (data || []).forEach((entry) => {
+          // Mark as completed if: explicitly marked OR completion_percent >= 100
           const isCompleted = Boolean(entry.course_completed) || Number(entry.completion_percent || 0) >= 100;
-          if (isCompleted) merged[entry.course_id] = true;
+          if (isCompleted) {
+            merged[entry.course_id] = true;
+            // Also save to localStorage as backup if DB says it's complete
+            const completionFlagKey = `course-completed-${entry.course_id}-${user.id}`;
+            localStorage.setItem(completionFlagKey, JSON.stringify({
+              completed: true,
+              completedAt: entry.attempted_at || new Date().toISOString(),
+              completionPercent: entry.completion_percent
+            }));
+          }
         });
 
         setCourseCompletionMap(merged);
       } catch (err) {
+        console.error('Failed to fetch completion status from database:', err);
         // Table not ready or query failed: keep local completion only.
         setCourseCompletionMap(localMap);
       }

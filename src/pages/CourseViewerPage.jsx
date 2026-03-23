@@ -448,7 +448,7 @@ export default function CourseViewerPage() {
       for (let attempt = 0; attempt < 2; attempt += 1) {
         const { error: insertError } = await supabase
           .from(ASSESSMENT_TABLE)
-          .upsert([payload], { onConflict: 'user_id,course_id' });
+          .upsert([payload]);
         if (!insertError) {
           lastInsertError = null;
           break;
@@ -457,6 +457,16 @@ export default function CourseViewerPage() {
       }
 
       if (lastInsertError) throw lastInsertError;
+
+      // Also save completion flag to localStorage for immediate availability
+      if (isCourseCompleted) {
+        const completionFlagKey = `course-completed-${courseId}-${user.id}`;
+        localStorage.setItem(completionFlagKey, JSON.stringify({
+          completed: true,
+          completedAt: new Date().toISOString(),
+          completionPercent: completionPercent
+        }));
+      }
 
       setAssessmentMessage({
         type: 'success',
@@ -476,6 +486,17 @@ export default function CourseViewerPage() {
         attempted_at: attemptedAt,
       };
       queuePendingAssessment(pendingPayload);
+      
+      // Also save completion flag even if DB fails
+      if (isCourseCompleted) {
+        const completionFlagKey = `course-completed-${courseId}-${user.id}`;
+        localStorage.setItem(completionFlagKey, JSON.stringify({
+          completed: true,
+          completedAt: new Date().toISOString(),
+          completionPercent: completionPercent
+        }));
+      }
+      
       setAssessmentMessage({
         type: 'success',
         text: 'Assessment saved locally. It will auto-sync when connection is stable.',
