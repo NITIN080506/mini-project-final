@@ -117,15 +117,35 @@ export default function CourseViewerPage() {
     const queued = readPendingAssessments();
     if (!queued.length) return;
 
+    console.log(`Flushing ${queued.length} pending assessments to server...`);
+
     const remaining = [];
     for (const payload of queued) {
-      const { error } = await supabase
-        .from(ASSESSMENT_TABLE)
-        .upsert([payload], { onConflict: 'user_id,course_id' });
-      if (error) remaining.push(payload);
+      let flushed = false;
+      // Retry up to 3 times for each pending item
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const { error } = await supabase
+          .from(ASSESSMENT_TABLE)
+          .upsert([payload], { onConflict: 'user_id,course_id' });
+        if (!error) {
+          flushed = true;
+          console.log(`✓ Flushed pending assessment for course ${payload.course_id}`);
+          break;
+        }
+        console.warn(`Attempt ${attempt + 1}/3 to flush failed:`, error);
+        if (attempt < 2) await new Promise(r => setTimeout(r, 500));
+      }
+      if (!flushed) {
+        remaining.push(payload);
+      }
     }
 
     writePendingAssessments(remaining);
+    if (remaining.length === 0) {
+      console.log('✓ All pending assessments flushed successfully!');
+    } else {
+      console.warn(`⚠ ${remaining.length} assessments still pending after retries`);
+    }
   };
 
   const totalPages = materialDoc.pages.length || 1;
@@ -445,18 +465,25 @@ export default function CourseViewerPage() {
       };
 
       let lastInsertError = null;
-      for (let attempt = 0; attempt < 2; attempt += 1) {
+      for (let attempt = 0; attempt < 3; attempt += 1) {
         const { error: insertError } = await supabase
           .from(ASSESSMENT_TABLE)
-          .upsert([payload]);
+          .upsert([payload], { onConflict: 'user_id,course_id' });
         if (!insertError) {
           lastInsertError = null;
+          console.log('✓ Assessment saved to server successfully');
           break;
         }
         lastInsertError = insertError;
+        console.warn(`Attempt ${attempt + 1} failed:`, insertError);
+        // Wait a bit before retry
+        if (attempt < 2) await new Promise(r => setTimeout(r, 500));
       }
 
-      if (lastInsertError) throw lastInsertError;
+      if (lastInsertError) {
+        console.error('All server sync attempts failed, queuing for later:', lastInsertError);
+        throw lastInsertError;
+      }
 
       // Also save completion flag to localStorage for immediate availability
       if (isCourseCompleted) {
