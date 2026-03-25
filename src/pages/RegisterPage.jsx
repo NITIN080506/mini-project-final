@@ -43,7 +43,9 @@ export default function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
-    if (!fullName || !email || !password || !confirmPassword || !selectedRole) {
+    const trimmedName = fullName.trim();
+
+    if (!trimmedName || !email || !password || !confirmPassword || !selectedRole) {
       setError('Please fill in all fields');
       return;
     }
@@ -62,14 +64,21 @@ export default function RegisterPage() {
         password,
         options: {
           data: {
-            full_name: fullName,
+            full_name: trimmedName,
             role: selectedRole,
           },
         },
       });
       if (signUpError) throw signUpError;
       if (user) {
-        const { error: profileError } = await supabase.from('profiles').insert([{ id: user.id, email, role: selectedRole }]);
+        const { error: profileError } = await supabase.from('profiles').insert([
+          {
+            id: user.id,
+            email,
+            role: selectedRole,
+            full_name: trimmedName,
+          },
+        ]);
         if (profileError) throw profileError;
         navigate(selectedRole === 'admin' ? '/admin' : '/student');
       }
@@ -139,6 +148,7 @@ export default function RegisterPage() {
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
+                  required
                   placeholder="Enter your full name"
                   className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
                 />
@@ -153,6 +163,7 @@ export default function RegisterPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  required
                   placeholder="Enter your email"
                   className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
                 />
@@ -167,6 +178,7 @@ export default function RegisterPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  required
                   placeholder="Enter your password"
                   className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
                 />
@@ -181,6 +193,7 @@ export default function RegisterPage() {
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
                   placeholder="Confirm your password"
                   className="w-full bg-white border border-slate-300 rounded-xl pl-12 pr-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors placeholder-slate-400 text-sm"
                 />
@@ -192,6 +205,7 @@ export default function RegisterPage() {
               <select
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
+                required
                 className="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-slate-900 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-100 transition-colors text-sm"
               >
                 <option value="student">Student</option>

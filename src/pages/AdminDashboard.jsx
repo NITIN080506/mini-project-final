@@ -28,14 +28,16 @@ export default function AdminDashboard() {
     if (activeTab === 'performance') {
       fetchStudentPerformance();
 
-      const channel = supabase
-        .channel('admin_performance_live')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: ASSESSMENT_TABLE }, fetchStudentPerformance)
-        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: ASSESSMENT_TABLE }, fetchStudentPerformance)
-        .subscribe();
+      const poll = setInterval(() => {
+        fetchStudentPerformance();
+      }, 12000);
+
+      const onFocus = () => fetchStudentPerformance();
+      window.addEventListener('focus', onFocus);
 
       return () => {
-        supabase.removeChannel(channel);
+        clearInterval(poll);
+        window.removeEventListener('focus', onFocus);
       };
     }
   }, [activeTab, supabase]);
@@ -53,12 +55,19 @@ export default function AdminDashboard() {
 
       const { data: profiles, error: profileErr } = await supabase
         .from('profiles')
-        .select('id, email, role')
+        .select('id, full_name, role')
         .in('id', uniqueUserIds);
 
       if (profileErr) throw profileErr;
 
-      setStudents(profiles.filter(p => p.role === 'student'));
+      setStudents(
+        profiles
+          .filter((p) => p.role === 'student')
+          .map((p) => ({
+            ...p,
+            full_name: (p.full_name || '').trim() || 'Unnamed Student',
+          }))
+      );
 
       const { data: resultData, error: resultErr } = await supabase
         .from(ASSESSMENT_TABLE)
@@ -215,8 +224,8 @@ export default function AdminDashboard() {
                 <div key={student.id} className="app-panel rounded-2xl p-6 hover:border-cyan-500 transition-all hover-lift">
                   <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
                     <div>
-                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Student Email</p>
-                      <p className="text-slate-900 font-bold text-sm">{student.email}</p>
+                      <p className="text-slate-500 text-xs font-bold uppercase mb-1">Student Name</p>
+                      <p className="text-slate-900 font-bold text-sm">{student.full_name}</p>
                     </div>
                     <div>
                       <p className="text-slate-500 text-xs font-bold uppercase mb-1">Assessments Submitted</p>

@@ -5,6 +5,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [supabase, setSupabase] = useState(null);
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [role, setRole] = useState(null);
   const [needsProfileSetup, setNeedsProfileSetup] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -51,6 +52,7 @@ export function AuthProvider({ children }) {
         handleUserSession(session.user);
       } else {
         setUser(null);
+        setProfile(null);
         setRole(null);
         setNeedsProfileSetup(false);
         setLoading(false);
@@ -65,12 +67,23 @@ export function AuthProvider({ children }) {
     if (!user || !role || !supabase) return;
     fetchCourses();
     fetchEnrollments();
-    const channel = supabase
-      .channel('global_sync')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'courses' }, fetchCourses)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'enrollments' }, fetchEnrollments)
-      .subscribe();
-    return () => supabase.removeChannel(channel);
+
+    const poll = setInterval(() => {
+      fetchCourses();
+      fetchEnrollments();
+    }, 15000);
+
+    const onFocus = () => {
+      fetchCourses();
+      fetchEnrollments();
+    };
+
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      clearInterval(poll);
+      window.removeEventListener('focus', onFocus);
+    };
   }, [user, role, supabase]);
 
   const handleUserSession = async (u) => {
@@ -78,11 +91,27 @@ export function AuthProvider({ children }) {
     try {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('role')
+        .select('role, full_name, email')
         .eq('id', u.id)
         .maybeSingle();
 
+      const metadataName = (u?.user_metadata?.full_name || u?.user_metadata?.name || '').trim();
+
       if (profile?.role) {
+        const resolvedName = (profile?.full_name || metadataName || 'User').trim();
+
+        if (!profile?.full_name && resolvedName) {
+          await supabase
+            .from('profiles')
+            .update({ full_name: resolvedName })
+            .eq('id', u.id);
+        }
+
+        if (!metadataName && resolvedName) {
+          await supabase.auth.updateUser({ data: { full_name: resolvedName } });
+        }
+
+        setProfile({ ...profile, full_name: resolvedName });
         setRole(profile.role);
         setNeedsProfileSetup(false);
       } else {
@@ -97,7 +126,7 @@ export function AuthProvider({ children }) {
 
         const metadataRole = u?.user_metadata?.role;
         const resolvedRole = (pendingRole || metadataRole || 'student').toLowerCase() === 'admin' ? 'admin' : 'student';
-        const fullName = pendingName || u?.user_metadata?.full_name || u?.user_metadata?.name || 'User';
+        const fullName = (pendingName || metadataName || 'User').trim();
 
         // Update user metadata with full name
         await supabase.auth.updateUser({ data: { full_name: fullName } });
@@ -107,6 +136,7 @@ export function AuthProvider({ children }) {
             id: u.id,
             email: u.email,
             role: resolvedRole,
+            full_name: fullName,
           },
         ]);
 
@@ -114,6 +144,12 @@ export function AuthProvider({ children }) {
           throw insertProfileError;
         }
 
+        setProfile({
+          id: u.id,
+          email: u.email,
+          role: resolvedRole,
+          full_name: fullName,
+        });
         setRole(resolvedRole);
         setNeedsProfileSetup(false);
       }
@@ -134,20 +170,85 @@ export function AuthProvider({ children }) {
     const safeName = (fullName || '').trim() || user?.user_metadata?.full_name || user?.user_metadata?.name || 'User';
 
     // Update user metadata with full name
-    await supabase.auth.updateUser({ data: { full_name: safeName } });
+    const { data: updatedUserData } = await supabase.auth.updateUser({ data: { full_name: safeName } });
 
     const { error } = await supabase.from('profiles').upsert([
       {
         id: user.id,
         email: user.email,
         role: normalizedRole,
+        full_name: safeName,
       },
-    ]);
+    ], {
+      onConflict: 'id',
+    });
 
     if (error) throw error;
 
+    if (updatedUserData?.user) {
+      setUser(updatedUserData.user);
+    } else {
+      setUser((prev) => ({
+        ...prev,
+        user_metadata: {
+          ...(prev?.user_metadata || {}),
+          full_name: safeName,
+        },
+      }));
+    }
+    setProfile((prev) => ({
+      ...(prev || {}),
+      id: user.id,
+      email: user.email,
+      role: normalizedRole,
+      full_name: safeName,
+    }));
     setRole(normalizedRole);
     setNeedsProfileSetup(false);
+  };
+
+  const updateProfileName = async ({ fullName }) => {
+    if (!user || !supabase) throw new Error('Session not ready');
+    const safeName = (fullName || '').trim();
+    if (!safeName) throw new Error('Name is required');
+
+    const { data: updatedUserData, error: updateUserError } = await supabase.auth.updateUser({
+      data: { full_name: safeName },
+    });
+    if (updateUserError) throw updateUserError;
+
+    const { error: profileError } = await supabase.from('profiles').upsert([
+      {
+        id: user.id,
+        email: user.email,
+        role: role || 'student',
+        full_name: safeName,
+      },
+    ], {
+      onConflict: 'id',
+    });
+
+    if (profileError) throw profileError;
+
+    if (updatedUserData?.user) {
+      setUser(updatedUserData.user);
+    } else {
+      setUser((prev) => ({
+        ...prev,
+        user_metadata: {
+          ...(prev?.user_metadata || {}),
+          full_name: safeName,
+        },
+      }));
+    }
+
+    setProfile((prev) => ({
+      ...(prev || {}),
+      id: user.id,
+      email: user.email,
+      role: role || 'student',
+      full_name: safeName,
+    }));
   };
 
   const fetchCourses = async () => {
@@ -174,13 +275,22 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    setProfile(null);
     setRole(null);
   };
+
+  const displayName =
+    profile?.full_name ||
+    user?.user_metadata?.full_name ||
+    user?.user_metadata?.name ||
+    'User';
 
   return (
     <AuthContext.Provider value={{
       supabase,
       user,
+      profile,
+      displayName,
       role,
       needsProfileSetup,
       loading,
@@ -188,6 +298,7 @@ export function AuthProvider({ children }) {
       enrollments,
       enrollCourse,
       completeProfile,
+      updateProfileName,
       logout,
       fetchCourses,
       fetchEnrollments

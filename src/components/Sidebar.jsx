@@ -24,8 +24,9 @@ import {
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { role, user, logout } = useAuth();
+  const { role, displayName, logout } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const handleLogout = async () => {
     await logout();
@@ -52,8 +53,8 @@ export default function Sidebar() {
     { label: 'Browse Courses', path: '/student?tab=browse', icon: Compass },
     { label: 'My Results', path: '/student?tab=my-results', icon: FileCheck },
     { label: 'Daily Rankings', path: '/student?tab=daily-rankings', icon: Trophy },
-    { label: 'Goals', path: '', icon: Target, disabled: true },
-    { label: 'Help', path: '', icon: HelpCircle, disabled: true },
+    { label: 'Goals', path: '/student?tab=goals', icon: Target },
+    { label: 'Personal AI Study Library', path: '/student?tab=help', icon: HelpCircle },
   ];
 
   const AdminNavigation = [
@@ -93,20 +94,32 @@ export default function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 h-screen w-72 panel-strong border-r border-slate-200 z-40 transition-transform duration-300 overflow-y-auto backdrop-blur-md lg:translate-x-0 ${
+        className={`fixed left-0 top-0 h-screen w-72 panel-strong border-r border-slate-200 z-40 transition-transform duration-300 overflow-y-auto backdrop-blur-md lg:translate-x-0 lg:transition-[width] lg:duration-300 ${isCollapsed ? 'lg:w-20' : 'lg:w-72'} ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        <div className="p-6 space-y-8 h-full flex flex-col page-enter">
+        <div className={`p-6 space-y-8 h-full flex flex-col page-enter ${isCollapsed ? 'lg:px-3' : 'lg:px-6'}`}>
+          <div className="hidden lg:flex justify-end">
+            <button
+              type="button"
+              onClick={() => setIsCollapsed((prev) => !prev)}
+              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition-all"
+              aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+          </div>
+
           {/* Logo/Branding */}
-          <div className="flex items-center gap-3 group cursor-pointer" onClick={() => {
+          <div className={`flex items-center group cursor-pointer ${isCollapsed ? 'lg:justify-center' : 'gap-3'}`} onClick={() => {
             navigate(role === 'admin' ? '/admin' : '/student');
             setIsOpen(false);
           }}>
             <div className="bg-teal-100 p-3 rounded-xl group-hover:bg-teal-200 transition-all">
               <BookOpen className="w-6 h-6 text-teal-700" />
             </div>
-            <div>
+            <div className={isCollapsed ? 'lg:hidden' : ''}>
               <p className="text-slate-900 font-black text-xl italic">EduFlow</p>
               <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">Learning Hub</p>
             </div>
@@ -116,15 +129,16 @@ export default function Sidebar() {
           <nav className="flex-1 space-y-6">
             {/* Main Navigation */}
             <div>
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-3">Navigation</p>
+              <p className={`text-slate-500 text-xs font-black uppercase tracking-widest mb-3 ${isCollapsed ? 'lg:hidden' : ''}`}>Navigation</p>
               <div className="space-y-2 animate-stagger">
                 {navigation.map((item, index) => (
                   <button
                     key={item.label}
                     onClick={() => handleNavClick(item.path, item.disabled)}
                     disabled={item.disabled}
+                    title={item.label}
                     style={{ animationDelay: `${index * 55}ms` }}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${
+                    className={`w-full flex items-center rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${isCollapsed ? 'lg:justify-center lg:px-3 px-4 py-3' : 'gap-3 px-4 py-3'} ${
                       isActive(item.path)
                         ? 'bg-teal-700 text-white shadow-lg shadow-teal-200'
                         : item.disabled
@@ -133,8 +147,8 @@ export default function Sidebar() {
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
-                    {item.label}
-                    {item.disabled && <span className="text-xs ml-auto">Soon</span>}
+                    <span className={isCollapsed ? 'lg:hidden' : ''}>{item.label}</span>
+                    {item.disabled && <span className={`text-xs ml-auto ${isCollapsed ? 'lg:hidden' : ''}`}>Soon</span>}
                   </button>
                 ))}
               </div>
@@ -144,14 +158,19 @@ export default function Sidebar() {
 
             {/* User Section */}
             <div>
-              <p className="text-slate-500 text-xs font-black uppercase tracking-widest mb-3">Account</p>
+              <p className={`text-slate-500 text-xs font-black uppercase tracking-widest mb-3 ${isCollapsed ? 'lg:hidden' : ''}`}>Account</p>
               <div className="space-y-2">
                 <button
-                  disabled
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm uppercase tracking-wide text-slate-600 opacity-50 cursor-not-allowed"
+                  onClick={() => handleNavClick('/student?tab=profile', false)}
+                  title="Profile"
+                  className={`w-full flex items-center rounded-xl font-bold text-sm uppercase tracking-wide transition-all ${isCollapsed ? 'lg:justify-center lg:px-3 px-4 py-3' : 'gap-3 px-4 py-3'} ${
+                    isActive('/student?tab=profile')
+                      ? 'bg-teal-700 text-white shadow-lg shadow-teal-200'
+                      : 'text-slate-700 hover:bg-teal-50 hover:text-teal-800 hover:-translate-y-0.5'
+                  }`}
                 >
                   <User className="w-4 h-4" />
-                  Profile
+                  <span className={isCollapsed ? 'lg:hidden' : ''}>Profile</span>
                 </button>
               </div>
             </div>
@@ -159,26 +178,27 @@ export default function Sidebar() {
 
           {/* User Info and Logout */}
           <div className="border-t border-slate-200 pt-6 space-y-4">
-            <div className="bg-slate-100 rounded-xl p-4 border border-slate-200 hover-lift">
+            <div className={`bg-slate-100 rounded-xl p-4 border border-slate-200 hover-lift ${isCollapsed ? 'lg:hidden' : ''}`}>
               <p className="text-slate-500 text-xs font-bold mb-1">Logged in as</p>
-              <p className="text-slate-900 font-bold text-sm truncate">{user?.email}</p>
+              <p className="text-slate-900 font-bold text-sm truncate">{displayName || 'User'}</p>
               <p className="text-teal-700 text-xs font-bold uppercase tracking-wide mt-1">
                 {role === 'admin' ? 'Administrator' : 'Student'}
               </p>
             </div>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-0.5"
+              title="Logout"
+              className={`w-full flex items-center justify-center bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg hover:-translate-y-0.5 ${isCollapsed ? 'lg:px-2 px-4 py-3' : 'gap-2 px-4 py-3'}`}
             >
               <LogOut className="w-4 h-4" />
-              Logout
+              <span className={isCollapsed ? 'lg:hidden' : ''}>Logout</span>
             </button>
           </div>
         </div>
       </aside>
 
       {/* Main content margin on desktop */}
-      <div className="hidden lg:block w-72" />
+      <div className={`hidden lg:block ${isCollapsed ? 'w-20' : 'w-72'}`} />
     </>
   );
 }

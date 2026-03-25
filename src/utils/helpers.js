@@ -3,6 +3,108 @@ import mammoth from 'mammoth';
 
 export const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 export const GROQ_MODEL = import.meta.env.VITE_GROQ_MODEL || 'llama-3.3-70b-versatile';
+export const ASSESSMENT_TABLE = 'student_assessment_results';
+export const GOALS_TABLE = 'student_goals';
+export const SELF_MATERIALS_TABLE = 'student_self_materials';
+
+const MISSING_TABLE_CODES = new Set(['42P01', 'PGRST205']);
+
+export const isMissingTableError = (error) => {
+  if (!error) return false;
+  if (MISSING_TABLE_CODES.has(error.code)) return true;
+  return /does not exist|relation .* does not exist|table .* not found/i.test(String(error.message || ''));
+};
+
+let ensureAssessmentTablePromise = null;
+let ensureGoalsTablePromise = null;
+let ensureSelfMaterialsTablePromise = null;
+
+export const ensureAssessmentResultsTable = async (supabase) => {
+  if (!supabase) return { ok: false, reason: 'missing_client' };
+  if (ensureAssessmentTablePromise) return ensureAssessmentTablePromise;
+
+  ensureAssessmentTablePromise = (async () => {
+    const probe = await supabase.from(ASSESSMENT_TABLE).select('id').limit(1);
+    if (!probe.error) return { ok: true, created: false };
+    if (!isMissingTableError(probe.error)) {
+      return { ok: false, reason: 'probe_failed', error: probe.error };
+    }
+
+    const rpcResult = await supabase.rpc('ensure_student_assessment_results_table');
+    if (rpcResult.error && rpcResult.error.code === 'PGRST202') {
+      return { ok: false, reason: 'missing_rpc', error: rpcResult.error };
+    }
+    if (rpcResult.error) return { ok: false, error: rpcResult.error };
+
+    const recheck = await supabase.from(ASSESSMENT_TABLE).select('id').limit(1);
+    if (recheck.error) return { ok: false, reason: 'recheck_failed', error: recheck.error };
+    return { ok: true, created: true };
+  })();
+
+  try {
+    return await ensureAssessmentTablePromise;
+  } finally {
+    ensureAssessmentTablePromise = null;
+  }
+};
+
+export const ensureStudentGoalsTable = async (supabase) => {
+  if (!supabase) return { ok: false, reason: 'missing_client' };
+  if (ensureGoalsTablePromise) return ensureGoalsTablePromise;
+
+  ensureGoalsTablePromise = (async () => {
+    const probe = await supabase.from(GOALS_TABLE).select('id').limit(1);
+    if (!probe.error) return { ok: true, created: false };
+    if (!isMissingTableError(probe.error)) {
+      return { ok: false, reason: 'probe_failed', error: probe.error };
+    }
+
+    const rpcResult = await supabase.rpc('ensure_student_goals_table');
+    if (rpcResult.error && rpcResult.error.code === 'PGRST202') {
+      return { ok: false, reason: 'missing_rpc', error: rpcResult.error };
+    }
+    if (rpcResult.error) return { ok: false, error: rpcResult.error };
+
+    const recheck = await supabase.from(GOALS_TABLE).select('id').limit(1);
+    if (recheck.error) return { ok: false, reason: 'recheck_failed', error: recheck.error };
+    return { ok: true, created: true };
+  })();
+
+  try {
+    return await ensureGoalsTablePromise;
+  } finally {
+    ensureGoalsTablePromise = null;
+  }
+};
+
+export const ensureStudentSelfMaterialsTable = async (supabase) => {
+  if (!supabase) return { ok: false, reason: 'missing_client' };
+  if (ensureSelfMaterialsTablePromise) return ensureSelfMaterialsTablePromise;
+
+  ensureSelfMaterialsTablePromise = (async () => {
+    const probe = await supabase.from(SELF_MATERIALS_TABLE).select('id').limit(1);
+    if (!probe.error) return { ok: true, created: false };
+    if (!isMissingTableError(probe.error)) {
+      return { ok: false, reason: 'probe_failed', error: probe.error };
+    }
+
+    const rpcResult = await supabase.rpc('ensure_student_self_materials_table');
+    if (rpcResult.error && rpcResult.error.code === 'PGRST202') {
+      return { ok: false, reason: 'missing_rpc', error: rpcResult.error };
+    }
+    if (rpcResult.error) return { ok: false, error: rpcResult.error };
+
+    const recheck = await supabase.from(SELF_MATERIALS_TABLE).select('id').limit(1);
+    if (recheck.error) return { ok: false, reason: 'recheck_failed', error: recheck.error };
+    return { ok: true, created: true };
+  })();
+
+  try {
+    return await ensureSelfMaterialsTablePromise;
+  } finally {
+    ensureSelfMaterialsTablePromise = null;
+  }
+};
 
 // Initialize PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
@@ -43,6 +145,9 @@ export const createQuestionsForPage = (pageText) => {
   const sentence = (pageText.match(/[^.!?]+[.!?]/)?.[0] || pageText).trim();
   const blankableWord = (sentence.match(/\b[a-zA-Z]{5,}\b/) || [focusWord])[0];
   const blankPrompt = sentence.replace(blankableWord, '________');
+  const shortAnswerQuestion = sentence
+    ? `Based on this page, explain: ${sentence.replace(/[.!?]+$/, '')}.`
+    : 'Explain the most important concept from this page in 1-2 sentences.';
 
   return {
     summary: sentence,
@@ -51,6 +156,11 @@ export const createQuestionsForPage = (pageText) => {
       options,
       answer: focusWord,
     },
+    shortAnswer: {
+      question: shortAnswerQuestion,
+      answer: sentence || `The core concept is ${focusWord}.`,
+    },
+    // Backward-compatible field for older consumers.
     fillBlank: {
       prompt: blankPrompt,
       answer: blankableWord,
